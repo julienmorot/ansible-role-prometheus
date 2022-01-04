@@ -1,0 +1,69 @@
+---
+
+- name: Create Prometheus group
+  group:
+    name: prometheus
+    state: present
+  become: yes
+
+- name: Create Prometheus user
+  user:
+    name: prometheus
+    system: true
+    shell: "/bin/false"
+    group: prometheus
+    createhome: true 
+    home: "{{ prometheus_db_dir }}"
+  become: yes
+
+- name: Create Prometheus config dir
+  file:
+    path: "{{ prometheus_config_dir }}"
+    state: directory
+    recurse: yes
+    owner: prometheus
+    group: prometheus
+    mode: 0770
+  become: yes
+
+- name: Get Prometheus tarball
+  get_url:
+    url: "{{ prometheus_release_url }}"
+    dest: /tmp
+    checksum: "sha256:{{ prometheus_tarball_checksum }}"
+  delegate_to: localhost
+
+- name: Extract Prometheus tarball
+  unarchive:
+    src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+    dest: /tmp
+    copy: yes
+
+- name: Copy Prometheus binaries
+  copy:
+    src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
+    dest: "{{ prometheus_bin_dir }}/{{ item }}"
+    remote_src: yes
+    mode: 0755
+    owner: prometheus
+    group: prometheus
+  with_items:
+    - prometheus
+    - promtool
+  become: yes
+
+- name: Copy Prometheus configs
+  copy:
+    src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
+    dest: "{{ prometheus_config_dir }}/{{ item }}"
+    remote_src: yes
+    mode: 0755
+    owner: prometheus
+    group: prometheus
+  with_items:
+    - consoles
+    - console_libraries
+  become: yes
+
+
+

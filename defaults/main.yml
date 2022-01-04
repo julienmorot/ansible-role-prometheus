@@ -1,0 +1,12 @@
+---
+
+prometheus_db_dir: /var/lib/prometheus
+prometheus_config_dir: /etc/prometheus
+prometheus_bin_dir: /usr/local/bin
+
+prometheus_version: 2.32.1
+prometheus_release_url: https://github.com/prometheus/prometheus/releases/download/v2.32.1/prometheus-2.32.1.linux-amd64.tar.gz
+prometheus_tarball_checksum: f08e96d73330a9ee7e6922a9f5b72ea188988a083bbfa9932359339fcf504a74
+prometheus_tarball: prometheus-2.32.1.linux-amd64.tar.gz
+
+
