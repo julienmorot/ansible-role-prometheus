@@ -31,6 +31,8 @@
     url: "{{ prometheus_release_url }}"
     dest: /tmp
     checksum: "sha256:{{ prometheus_tarball_checksum }}"
+    retries: 5
+    delay: 2
 
 - name: Extract Prometheus tarball
   ansible.builtin.unarchive:
