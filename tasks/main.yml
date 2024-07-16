@@ -2,13 +2,13 @@
 
 - name: Create Prometheus group
   ansible.builtin.group:
-    name: prometheus
+    name: {{ prometheus_group }}
     state: present
   become: yes
 
 - name: Create Prometheus user
   ansible.builtin.user:
-    name: prometheus
+    name: {{ prometheus_user }}
     system: true
     shell: "/bin/false"
     group: prometheus
@@ -21,8 +21,8 @@
     path: "{{ prometheus_config_dir }}"
     state: directory
     recurse: yes
-    owner: prometheus
-    group: prometheus
+    owner: {{ prometheus_user }}
+    group: {{ prometheus_group }}
     mode: 0770
   become: yes
 
@@ -46,8 +46,8 @@
     dest: "{{ prometheus_bin_dir }}/{{ item }}"
     remote_src: yes
     mode: 0755
-    owner: prometheus
-    group: prometheus
+    owner: {{ prometheus_user }}
+    group: {{ prometheus_group }}
   with_items:
     - prometheus
     - promtool
@@ -59,8 +59,8 @@
     dest: "{{ prometheus_config_dir }}/{{ item }}"
     remote_src: yes
     mode: 0755
-    owner: prometheus
-    group: prometheus
+    owner: {{ prometheus_user }}
+    group: {{ prometheus_group }}
   with_items:
     - consoles
     - console_libraries
@@ -88,7 +88,7 @@
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
     owner: root
-    group: prometheus
+    group: {{ prometheus_group }}
     mode: 0644
   become: yes
   notify: Restart Prometheus
