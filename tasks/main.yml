@@ -1,13 +1,13 @@
 ---
 
 - name: Create Prometheus group
-  group:
+  ansible.builtin.group:
     name: prometheus
     state: present
   become: yes
 
 - name: Create Prometheus user
-  user:
+  ansible.builtin.user:
     name: prometheus
     system: true
     shell: "/bin/false"
@@ -17,7 +17,7 @@
   become: yes
 
 - name: Create Prometheus config dir
-  file:
+  ansible.builtin.file:
     path: "{{ prometheus_config_dir }}"
     state: directory
     recurse: yes
@@ -27,20 +27,19 @@
   become: yes
 
 - name: Get Prometheus tarball
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ prometheus_release_url }}"
     dest: /tmp
     checksum: "sha256:{{ prometheus_tarball_checksum }}"
-  delegate_to: localhost
 
 - name: Extract Prometheus tarball
-  unarchive:
+  ansible.builtin.unarchive:
     src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
     dest: /tmp
     copy: yes
 
 - name: Copy Prometheus binaries
-  copy:
+  ansible.builtin.copy:
     src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
     dest: "{{ prometheus_bin_dir }}/{{ item }}"
     remote_src: yes
@@ -53,7 +52,7 @@
   become: yes
 
 - name: Copy Prometheus configs
-  copy:
+  ansible.builtin.copy:
     src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64/{{ item }}"
     dest: "{{ prometheus_config_dir }}/{{ item }}"
     remote_src: yes
@@ -66,7 +65,7 @@
   become: yes
 
 - name: Deploy Prometheus systemd unit 
-  template:
+  ansible.builtin.template:
     src: prometheus.service.j2
     dest: /etc/systemd/system/prometheus.service
     owner: root
@@ -75,7 +74,7 @@
   become: yes
 
 - name: Start and enable on boot service
-  systemd:
+  ansible.builtin.systemd:
     name: prometheus
     daemon-reload: yes
     enabled: yes
@@ -83,7 +82,7 @@
   become: yes
 
 - name: Deploy Prometheus config
-  template:
+  ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
     owner: root
@@ -93,32 +92,32 @@
   notify: Restart Prometheus
 
 - name: Install Grafana install dependancies
-  apt:
+  ansible.builtin.apt:
     pkg:
     - apt-transport-https
     - software-properties-common
   become: yes
 
 - name: Add Grafana Apt signing key
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://packages.grafana.com/gpg.key
     state: present
   become: yes
 
 - name: Add Grafana repository
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb https://packages.grafana.com/enterprise/deb stable main
     state: present
   become: yes
 
 - name: Install the build dependencies for package "foo"
-  apt:
+  ansible.builtin.apt:
     pkg: grafana
     update_cache: yes
   become: yes
 
 - name: Start and enable on boot service
-  systemd:
+  ansible.builtin.systemd:
     name: grafana-server
     daemon-reload: yes
     enabled: yes
