@@ -9,5 +9,5 @@ prometheus_release_url: https://github.com/prometheus/prometheus/releases/downlo
 prometheus_tarball_checksum: 2234aa0f66d9f9b854144f6faaaed72a316df7a680d9dad7cb48e49a6fa5332c 
 prometheus_tarball: prometheus-2.53.1.linux-amd64.tar.gz
 
-prometheuser_user: prometheus
-prometheuser_group: prometheus
+prometheus_user: prometheus
+prometheus_group: prometheus
