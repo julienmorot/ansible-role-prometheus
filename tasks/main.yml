@@ -32,12 +32,13 @@
     dest: /tmp
     checksum: "sha256:{{ prometheus_tarball_checksum }}"
     timeout: 10
+  delegate_to: localhost
 
 - name: Extract Prometheus tarball
   ansible.builtin.unarchive:
     src: "/tmp/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
     dest: /tmp
-    copy: yes
+    remote_src: true
 
 - name: Copy Prometheus binaries
   ansible.builtin.copy:
